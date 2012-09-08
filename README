@@ -1,0 +1,12 @@
+PowerHAL Binaries for Crespo, Maguro & Grouper
+
+These binaries support the ondemand boostpulse interface, which enables ondemand 
+to be as buttery as interactive without the expensive overhead of interactive.
+
+Instructions:
+crespo: place in /system/lib/hw
+maguro: rename the existing /system/lib/hw/power.tuna.so then replace with mine.
+
+grouper: rename the existing /system/vendor/lib/hw/power.grouper.so and replace with mine.
+
+Source is on my github in the various device_blah_blah repos.
