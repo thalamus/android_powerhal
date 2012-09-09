@@ -1,20 +1,19 @@
-From 108e022b8f4f1b8f1ac068bc1bca28ecd0b00d0e Mon Sep 17 00:00:00 2001
+From 2f8b78798e1e038e8a33273e7a6c57bd07e833f3 Mon Sep 17 00:00:00 2001
 From: Will Tisdale <willtisdale@gmail.com>
-Date: Sat, 8 Sep 2012 21:56:06 +0100
-Subject: [PATCH] crespo: PowerHAL based on tuna for use with boostpulse
- ondemand
+Date: Sun, 9 Sep 2012 10:20:37 +0100
+Subject: [PATCH] herring: PowerHAL based on tuna for use with boostpulse
 
-Change-Id: I76710f258bbe6baca31d361ee495b5f8afd1bded
+Change-Id: I338bc9f52dd7f06ba3d03c2dc349c366c31f215e
 ---
- power/Android.mk     |   27 ++++++++++
- power/power_crespo.c |  143 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ power/Android.mk      |   27 ++++++++++
+ power/power_herring.c |  143 +++++++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 170 insertions(+)
  create mode 100644 power/Android.mk
- create mode 100644 power/power_crespo.c
+ create mode 100644 power/power_herring.c
 
 diff --git a/power/Android.mk b/power/Android.mk
 new file mode 100644
-index 0000000..9a06fd7
+index 0000000..a16332f
 --- /dev/null
 +++ b/power/Android.mk
 @@ -0,0 +1,27 @@
@@ -41,15 +40,15 @@ index 0000000..9a06fd7
 +
 +LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 +LOCAL_SHARED_LIBRARIES := liblog libcutils
-+LOCAL_SRC_FILES := power_crespo.c
-+LOCAL_MODULE := power.crespo
++LOCAL_SRC_FILES := power_herring.c
++LOCAL_MODULE := power.herring
 +LOCAL_MODULE_TAGS := optional
 +include $(BUILD_SHARED_LIBRARY)
-diff --git a/power/power_crespo.c b/power/power_crespo.c
+diff --git a/power/power_herring.c b/power/power_herring.c
 new file mode 100644
-index 0000000..11f8693
+index 0000000..a768a0d
 --- /dev/null
-+++ b/power/power_crespo.c
++++ b/power/power_herring.c
 @@ -0,0 +1,143 @@
 +/*
 + * Copyright (C) 2012 The Android Open Source Project
@@ -72,7 +71,7 @@ index 0000000..11f8693
 +#include <sys/stat.h>
 +#include <fcntl.h>
 +
-+#define LOG_TAG "Crespo PowerHAL"
++#define LOG_TAG "Herring PowerHAL"
 +#include <utils/Log.h>
 +
 +#include <hardware/hardware.h>
@@ -84,7 +83,7 @@ index 0000000..11f8693
 +#define SAMPLING_RATE_SCREEN_OFF "500000"
 +
 +
-+struct crespo_power_module {
++struct herring_power_module {
 +    struct power_module base;
 +    pthread_mutex_t lock;
 +    int boostpulse_fd;
@@ -112,47 +111,47 @@ index 0000000..11f8693
 +    close(fd);
 +}
 +
-+static void crespo_power_init(struct power_module *module)
++static void herring_power_init(struct power_module *module)
 +{
 +    sysfs_write(SAMPLING_RATE_ONDEMAND, SAMPLING_RATE_SCREEN_ON);
 +}
 +
-+static int boostpulse_open(struct crespo_power_module *crespo)
++static int boostpulse_open(struct herring_power_module *herring)
 +{
 +    char buf[80];
 +
-+    pthread_mutex_lock(&crespo->lock);
-+    if (crespo->boostpulse_fd < 0) {
-+        crespo->boostpulse_fd = open(ONDEMAND_BOOSTPULSE_PATH, O_WRONLY);
++    pthread_mutex_lock(&herring->lock);
++    if (herring->boostpulse_fd < 0) {
++        herring->boostpulse_fd = open(ONDEMAND_BOOSTPULSE_PATH, O_WRONLY);
 +
-+        if (crespo->boostpulse_fd < 0 && !crespo->boostpulse_warned) {
++        if (herring->boostpulse_fd < 0 && !herring->boostpulse_warned) {
 +            strerror_r(errno, buf, sizeof(buf));
 +            ALOGE("Error opening boostpulse_fd: %s: %s\n", buf);
-+            crespo->boostpulse_warned = 1;
++            herring->boostpulse_warned = 1;
 +        }
 +    }
 +
-+    pthread_mutex_unlock(&crespo->lock);
-+    return crespo->boostpulse_fd;
++    pthread_mutex_unlock(&herring->lock);
++    return herring->boostpulse_fd;
 +}
 +
-+static void crespo_power_set_interactive(struct power_module *module, int on)
++static void herring_power_set_interactive(struct power_module *module, int on)
 +{
 +    sysfs_write(SAMPLING_RATE_ONDEMAND,
 +                on ? SAMPLING_RATE_SCREEN_ON : SAMPLING_RATE_SCREEN_OFF);
 +}
 +
-+static void crespo_power_hint(struct power_module *module, power_hint_t hint,
++static void herring_power_hint(struct power_module *module, power_hint_t hint,
 +                            void *data)
 +{
-+    struct crespo_power_module *crespo = (struct crespo_power_module *) module;
++    struct herring_power_module *herring = (struct herring_power_module *) module;
 +    char buf[80];
 +    int len;
 +
 +    switch (hint) {
 +    case POWER_HINT_INTERACTION:
-+        if (boostpulse_open(crespo) >= 0) {
-+	    len = write(crespo->boostpulse_fd, "1", 1);
++        if (boostpulse_open(herring) >= 0) {
++	    len = write(herring->boostpulse_fd, "1", 1);
 +
 +	    if (len < 0) {
 +	        strerror_r(errno, buf, sizeof(buf));
@@ -173,21 +172,21 @@ index 0000000..11f8693
 +    .open = NULL,
 +};
 +
-+struct crespo_power_module HAL_MODULE_INFO_SYM = {
++struct herring_power_module HAL_MODULE_INFO_SYM = {
 +    base: {
 +        common: {
 +            tag: HARDWARE_MODULE_TAG,
 +            module_api_version: POWER_MODULE_API_VERSION_0_2,
 +            hal_api_version: HARDWARE_HAL_API_VERSION,
 +            id: POWER_HARDWARE_MODULE_ID,
-+            name: "Crespo Power HAL",
++            name: "Herring Power HAL",
 +            author: "The Android Open Source Project",
 +            methods: &power_module_methods,
 +        },
 +
-+       init: crespo_power_init,
-+       setInteractive: crespo_power_set_interactive,
-+       powerHint: crespo_power_hint,
++       init: herring_power_init,
++       setInteractive: herring_power_set_interactive,
++       powerHint: herring_power_hint,
 +    },
 +
 +    lock: PTHREAD_MUTEX_INITIALIZER,
