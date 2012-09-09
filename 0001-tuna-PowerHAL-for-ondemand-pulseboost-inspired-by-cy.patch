@@ -1,0 +1,75 @@
+From 57eccaedbcf8c557e709a1b67413e4f87e831554 Mon Sep 17 00:00:00 2001
+From: Will Tisdale <willtisdale@gmail.com>
+Date: Sat, 8 Sep 2012 21:50:08 +0100
+Subject: [PATCH 1/2] tuna: PowerHAL for ondemand pulseboost inspired by
+ cyanogens work
+
+Change-Id: Ib2782047f58c112b52f92ddc50527ac093feeea5
+---
+ power/power_tuna.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/power/power_tuna.c b/power/power_tuna.c
+index 7d06093..81ba65f 100644
+--- a/power/power_tuna.c
++++ b/power/power_tuna.c
+@@ -26,6 +26,11 @@
+ #include <hardware/power.h>
+ 
+ #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
++#define ONDEMAND_BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
++#define SAMPLING_RATE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate"
++#define SAMPLING_RATE_SCREEN_ON "50000"
++#define SAMPLING_RATE_SCREEN_OFF "500000"
++
+ 
+ struct tuna_power_module {
+     struct power_module base;
+@@ -61,7 +66,7 @@ static void tuna_power_init(struct power_module *module)
+      * cpufreq interactive governor: timer 20ms, min sample 60ms,
+      * hispeed 700MHz at load 50%.
+      */
+-
++    sysfs_write(SAMPLING_RATE_ONDEMAND, SAMPLING_RATE_SCREEN_ON);
+     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
+                 "20000");
+     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
+@@ -82,11 +87,12 @@ static int boostpulse_open(struct tuna_power_module *tuna)
+ 
+     if (tuna->boostpulse_fd < 0) {
+         tuna->boostpulse_fd = open(BOOSTPULSE_PATH, O_WRONLY);
+-
+         if (tuna->boostpulse_fd < 0) {
+-            if (!tuna->boostpulse_warned) {
++            tuna->boostpulse_fd = open(ONDEMAND_BOOSTPULSE_PATH, O_WRONLY);
++
++            if (tuna->boostpulse_fd < 0 && !tuna->boostpulse_warned) {
+                 strerror_r(errno, buf, sizeof(buf));
+-                ALOGE("Error opening %s: %s\n", BOOSTPULSE_PATH, buf);
++                ALOGE("Error opening boostpulse_fd: %s: %s\n", buf);
+                 tuna->boostpulse_warned = 1;
+             }
+         }
+@@ -104,7 +110,9 @@ static void tuna_power_set_interactive(struct power_module *module, int on)
+      */
+ 
+     sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
+-                on ? "1200000" : "700000");
++                on ? "1500000" : "700000");
++    sysfs_write(SAMPLING_RATE_ONDEMAND,
++                on ? SAMPLING_RATE_SCREEN_ON : SAMPLING_RATE_SCREEN_OFF);
+ }
+ 
+ static void tuna_power_hint(struct power_module *module, power_hint_t hint,
+@@ -121,7 +129,7 @@ static void tuna_power_hint(struct power_module *module, power_hint_t hint,
+ 
+ 	    if (len < 0) {
+ 	        strerror_r(errno, buf, sizeof(buf));
+-		ALOGE("Error writing to %s: %s\n", BOOSTPULSE_PATH, buf);
++		ALOGE("Error writing to boostpulse: %s\n", buf);
+ 	    }
+ 	}
+         break;
+-- 
+1.7.9.5
+

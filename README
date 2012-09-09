@@ -9,4 +9,4 @@ maguro: rename the existing /system/lib/hw/power.tuna.so then replace with mine.
 
 grouper: rename the existing /system/vendor/lib/hw/power.grouper.so and replace with mine.
 
-Source is on my github in the various device_blah_blah repos.
+Source is in the patch files here. Just apply to the respective device vendors.
