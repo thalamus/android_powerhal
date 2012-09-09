@@ -1,0 +1,56 @@
+From efc11240e5713ef85ad13ffff4e94377744f3923 Mon Sep 17 00:00:00 2001
+From: Will Tisdale <willtisdale@gmail.com>
+Date: Sun, 9 Sep 2012 17:23:30 +0100
+Subject: [PATCH 3/3] grouper: PowerHAL: actually remove interactive code :|
+ Screen on to 40000, off to 120000
+
+Change-Id: Icea6c8164f904ef70c91138491ccbc92965e03e5
+---
+ power/power.c |   19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/power/power.c b/power/power.c
+index 255d694..77b3fe4 100644
+--- a/power/power.c
++++ b/power/power.c
+@@ -25,11 +25,10 @@
+ #include <hardware/hardware.h>
+ #include <hardware/power.h>
+ 
+-#define INT_BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
+ #define ONDEMAND_BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
+ #define SAMPLING_RATE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate"
+-#define SAMPLING_RATE_SCREEN_ON "50000"
+-#define SAMPLING_RATE_SCREEN_OFF "500000"
++#define SAMPLING_RATE_SCREEN_ON "40000"
++#define SAMPLING_RATE_SCREEN_OFF "120000"
+ 
+ 
+ struct grouper_power_module {
+@@ -73,17 +72,15 @@ static int boostpulse_open(struct grouper_power_module *grouper)
+ 
+     if (grouper->boostpulse_fd < 0) {
+         grouper->boostpulse_fd = open(ONDEMAND_BOOSTPULSE_PATH, O_WRONLY);
+-        if (grouper->boostpulse_fd < 0) {
+-            grouper->boostpulse_fd = open(INT_BOOSTPULSE_PATH, O_WRONLY);
+-
+-            if (grouper->boostpulse_fd < 0 && !grouper->boostpulse_warned) {
+-                strerror_r(errno, buf, sizeof(buf));
+-                ALOGE("Error opening boostpulse: %s\n", buf);
+-                grouper->boostpulse_warned = 1;
+-            }
++
++	if (grouper->boostpulse_fd < 0 && !grouper->boostpulse_warned) {
++            strerror_r(errno, buf, sizeof(buf));
++            ALOGE("Error opening boostpulse: %s\n", buf);
++            grouper->boostpulse_warned = 1;
+         }
+     }
+ 
++
+     pthread_mutex_unlock(&grouper->lock);
+     return grouper->boostpulse_fd;
+ }
+-- 
+1.7.9.5
+

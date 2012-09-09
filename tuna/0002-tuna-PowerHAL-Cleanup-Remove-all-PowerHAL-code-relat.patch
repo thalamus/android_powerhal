@@ -1,7 +1,7 @@
 From b0965dce013b92ad89d6a8085ba658f8c97e7c14 Mon Sep 17 00:00:00 2001
 From: Will Tisdale <willtisdale@gmail.com>
 Date: Sun, 9 Sep 2012 00:20:29 +0100
-Subject: [PATCH 2/2] tuna: PowerHAL: Cleanup Remove all PowerHAL code related
+Subject: [PATCH 2/3] tuna: PowerHAL: Cleanup Remove all PowerHAL code related
  to interactive governor
 
 ---

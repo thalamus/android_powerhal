@@ -1,7 +1,7 @@
 From 2f8b78798e1e038e8a33273e7a6c57bd07e833f3 Mon Sep 17 00:00:00 2001
 From: Will Tisdale <willtisdale@gmail.com>
 Date: Sun, 9 Sep 2012 10:20:37 +0100
-Subject: [PATCH] herring: PowerHAL based on tuna for use with boostpulse
+Subject: [PATCH 1/2] herring: PowerHAL based on tuna for use with boostpulse
 
 Change-Id: I338bc9f52dd7f06ba3d03c2dc349c366c31f215e
 ---

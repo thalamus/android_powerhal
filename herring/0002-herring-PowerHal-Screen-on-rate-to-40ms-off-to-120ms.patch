@@ -1,0 +1,28 @@
+From 2d06500c90e66acd4d4fb5c37e845230e4a47ee4 Mon Sep 17 00:00:00 2001
+From: Will Tisdale <willtisdale@gmail.com>
+Date: Sun, 9 Sep 2012 17:11:15 +0100
+Subject: [PATCH 2/2] herring: PowerHal: Screen on rate to 40ms, off to 120ms
+
+Change-Id: I41f956a7e1292e84aa0532bb94e42df3ee1fbf2b
+---
+ power/power_herring.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/power/power_herring.c b/power/power_herring.c
+index a768a0d..f085382 100644
+--- a/power/power_herring.c
++++ b/power/power_herring.c
+@@ -27,8 +27,8 @@
+ 
+ #define ONDEMAND_BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
+ #define SAMPLING_RATE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate"
+-#define SAMPLING_RATE_SCREEN_ON "50000"
+-#define SAMPLING_RATE_SCREEN_OFF "500000"
++#define SAMPLING_RATE_SCREEN_ON "40000"
++#define SAMPLING_RATE_SCREEN_OFF "120000"
+ 
+ 
+ struct herring_power_module {
+-- 
+1.7.9.5
+

@@ -1,7 +1,7 @@
-From 2b84d0cdc7157521f09fd196200ec72afde2c1f7 Mon Sep 17 00:00:00 2001
+From 70835aabbb1c7de75f36c1948a5f0cf734ebf6ee Mon Sep 17 00:00:00 2001
 From: Will Tisdale <willtisdale@gmail.com>
 Date: Sun, 9 Sep 2012 00:13:21 +0100
-Subject: [PATCH 2/2] grouper: PowerHAL: Cleanup remove 700MHz clamp whilst
+Subject: [PATCH 2/3] grouper: PowerHAL: Cleanup remove 700MHz clamp whilst
  screen off (leftover from tuna) remove any interactive
  governor related code
 

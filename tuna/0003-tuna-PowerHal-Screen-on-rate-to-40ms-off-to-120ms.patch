@@ -1,0 +1,28 @@
+From a7463964435ad330d012e6a53e449f2a611d432e Mon Sep 17 00:00:00 2001
+From: Will Tisdale <willtisdale@gmail.com>
+Date: Sun, 9 Sep 2012 17:16:06 +0100
+Subject: [PATCH 3/3] tuna: PowerHal: Screen on rate to 40ms, off to 120ms
+
+Change-Id: Ie107c9cdeab506e83ecb9ac58f37e5c05aced679
+---
+ power/power_tuna.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/power/power_tuna.c b/power/power_tuna.c
+index 0ef22fb..c4bb074 100644
+--- a/power/power_tuna.c
++++ b/power/power_tuna.c
+@@ -27,8 +27,8 @@
+ 
+ #define ONDEMAND_BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
+ #define SAMPLING_RATE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate"
+-#define SAMPLING_RATE_SCREEN_ON "50000"
+-#define SAMPLING_RATE_SCREEN_OFF "500000"
++#define SAMPLING_RATE_SCREEN_ON "40000"
++#define SAMPLING_RATE_SCREEN_OFF "120000"
+ 
+ 
+ struct tuna_power_module {
+-- 
+1.7.9.5
+
