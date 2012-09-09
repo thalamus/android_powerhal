@@ -1,11 +1,15 @@
-PowerHAL Binaries for Crespo, Maguro & Grouper
+PowerHAL Binaries for Herring, Tuna & Grouper
+
+Herring - Crespo / Crespo4G (Nexus S)
+Tuna - Maguro / Toro / ToroSpr (Nexus Prime)
+Grouper (Nexus 7)
 
 These binaries support the ondemand boostpulse interface, which enables ondemand 
 to be as buttery as interactive without the expensive overhead of interactive.
 
 Instructions:
-crespo: place in /system/lib/hw
-maguro: rename the existing /system/lib/hw/power.tuna.so then replace with mine.
+herring: place in /system/lib/hw
+tuna: rename the existing /system/lib/hw/power.tuna.so then replace with mine.
 
 grouper: rename the existing /system/vendor/lib/hw/power.grouper.so and replace with mine.
 
